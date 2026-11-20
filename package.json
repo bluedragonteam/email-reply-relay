@@ -1,0 +1,25 @@
+{
+  "name": "email-reply-relay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker that turns Email Routing into a reply inbox: signed Reply-To addresses, forwarding, and a D1 queue your app pulls over HTTP.",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute email-reply-relay --remote --file schema.sql",
+    "db:init:local": "wrangler d1 execute email-reply-relay --local --file schema.sql",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
+  },
+  "dependencies": {
+    "postal-mime": "2.7.6"
+  },
+  "devDependencies": {
+    "wrangler": "4.156.0"
+  }
+}

@@ -1,0 +1,31 @@
+# Copy to wrangler.toml and replace the placeholders:  cp wrangler.toml.example wrangler.toml
+name = "email-reply-relay"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+[vars]
+# The subdomain whose Email Routing catch-all points at this Worker
+REPLY_DOMAIN = "reply.example.com"
+# Where every incoming reply is forwarded (with attachments). Must be a verified destination
+# address under Email Routing > Destination addresses. Can also be set as a secret instead.
+FORWARD_TO = "inbox@example.com"
+# Acknowledged items are deleted by the cron trigger after this many days
+RETENTION_DAYS = "7"
+# Hex characters of HMAC kept in each reply address (8-64). Must match the sending app.
+SIGNATURE_LENGTH = "16"
+# Optional: POSTed {"event":"reply.queued","id":...,"signed":...} when a reply is queued
+# NOTIFY_URL = "https://app.example.com/hooks/reply-queued"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "email-reply-relay"
+# Printed by: npx wrangler d1 create email-reply-relay
+database_id = "00000000-0000-0000-0000-000000000000"
+
+[triggers]
+# Daily cleanup of acknowledged items
+crons = ["17 3 * * *"]
+
+# Secrets - never put these in this file:
+#   npx wrangler secret put REPLY_SECRET   # HMAC key for reply addresses, shared with the sending app
+#   npx wrangler secret put SYNC_TOKEN     # bearer token the app uses for /sync/pull and /sync/ack
